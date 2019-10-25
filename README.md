@@ -1,4 +1,4 @@
-# Cosmos DB Power BI Connector Proxy
+# Cosmos DB Power BI Connector Spark Proxy
 
 This project shows how to use Spark as a proxy to access large amounts of data stored in Cosmos DB in Power BI. 
 
@@ -51,7 +51,7 @@ Take the token and update the `DATABRICKS_TOKEN` secret in the Azure Key Vault t
 
 ## Visualize Data with Power BI
 
-If you haven't already, download the latest version of [PowerBI Desktop](https://powerbi.microsoft.com/en-us/desktop/).
+If you haven't already, download the latest version of [PowerBI Desktop](https://powerbi.microsoft.com/en-us/desktop/). Follow the steps below to connect your new data source to Power BI or follow this [tutorial](https://docs.azuredatabricks.net/bi/power-bi.html) from the Databricks documentation for more information.
 
 ## Get the JDBC URL
 

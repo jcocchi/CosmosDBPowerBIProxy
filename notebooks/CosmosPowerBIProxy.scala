@@ -1,7 +1,7 @@
 // Databricks notebook source
-dbutils.widgets.text("cosmos-endpoint", "jpkadvisor")
+dbutils.widgets.text("cosmos-endpoint", "cosmos-account-name")
 dbutils.widgets.text("cosmos-database", "db")
-dbutils.widgets.text("cosmos-collection", "coll2")
+dbutils.widgets.text("cosmos-collection", "coll")
 
 // COMMAND ----------
 
@@ -34,13 +34,16 @@ def generateData() : DataFrame = {
 // COMMAND ----------
 
 val endpoint = "https://" + dbutils.widgets.get("cosmos-endpoint") + ".documents.azure.com:443/"
+val masterkey = dbutils.secrets.get(scope = "MAIN", key = "DATABRICKS-TOKEN")
+val database = dbutils.widgets.get("cosmos-database")
+val collection = dbutils.widgets.get("cosmos-collection")
 
 // Write Configuration
 val writeConfig = Config(Map(
   "Endpoint" -> endpoint,
-  "Masterkey" -> dbutils.secrets.get(scope = "MAIN", key = "cosmos-key"),
-  "Database" -> dbutils.widgets.get("cosmos-database"),
-  "Collection" -> dbutils.widgets.get("cosmos-collection"),
+  "Masterkey" -> masterkey,
+  "Database" -> database,
+  "Collection" -> collection,
   "Upsert" -> "true"
 ))
 
@@ -51,16 +54,5 @@ data.write.mode(SaveMode.Overwrite).cosmosDB(writeConfig)
 
 // COMMAND ----------
 
-// Read Configuration
-val readConfig = Config(Map(
-  "Endpoint" -> endpoint,
-  "Masterkey" -> dbutils.secrets.get(scope = "MAIN", key = "cosmos-key"),
-  "Database" -> dbutils.widgets.get("cosmos-database"),
-  "Collection" -> dbutils.widgets.get("cosmos-collection")
-))
-
-// Read the data back out of Cosmos DB
-val records = spark.read.cosmosDB(readConfig)
-
-// Save dataframe as a table
-records.write.mode("overwrite").saveAsTable("cosmosData")
+// Create an external table pointing to your Cosmos DB collection
+spark.sql(s"CREATE TABLE cosmosdata2 USING com.microsoft.azure.cosmosdb.spark options (endpoint '$endpoint', database '$database', collection '$collection', masterkey '$masterkey')")
