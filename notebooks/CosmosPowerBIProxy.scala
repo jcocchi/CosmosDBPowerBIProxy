@@ -5,33 +5,45 @@ dbutils.widgets.text("cosmos-collection", "coll")
 
 // COMMAND ----------
 
-// Import Necessary Libraries
-import com.microsoft.azure.cosmosdb.spark.schema._
-import com.microsoft.azure.cosmosdb.spark._
-import com.microsoft.azure.cosmosdb.spark.config.Config
-import org.apache.spark.sql.SaveMode
-import org.apache.spark.sql.types._
 import org.apache.spark.sql.DataFrame
-import spark.implicits._
+import org.apache.spark.sql.types._
+import scala.util.Random
 
-// COMMAND ----------
+val r = new Random()
+
+def items = Seq("speaker", "laptop", "headphones", "montior") 
+
+def gen_lat() : Double = {
+  val u = r.nextDouble();
+  val latitude = Math.toDegrees(Math.acos(u*2-1)) - 90;
+  
+  return latitude
+}
+
+def gen_lon() : Double = {
+  val v = r.nextDouble();
+  val longitude = 360 * v - 180;
+  
+  return longitude
+}
 
 def generateData() : DataFrame = {
-  return Seq(
-    (51.5, -1.1166667, 399.99, 3, "speaker"),
-    (39.195, -94.68194, 1299.99, 5, "laptop"),
-    (46.18806, -123.83, 399.99, 1, "speaker"),
-    (-36.13333, 144.75, 89.99, 30, "headphones"),
-    (33.52056, -86.8025, 149.99, 7, "monitor"),
-    (39.79, -75.23806, 1299.99, 12, "laptop"),
-    (40.69361, -89.58889, 399.99, 2, "speaker"),
-    (36.34333, -88.85028, 149.9, 8, "monitor"),
-    (48.883333, 2.15, 89.99, 2, "headphones"),
-    (51.45, 5.466667, 159.99, 15, "monitor")
-  ).toDF("lat", "lon", "price", "quantity", "item")
+  def lat = gen_lat()
+  def lon = gen_lon()
+  def item = items(r.nextInt(items.length))
+  def quantity = r.nextInt(1000)
+  
+  return sc.parallelize(
+    Seq.fill(50000){(lat, lon, item, quantity)}
+  ).toDF("lat", "lon", "item", "quantity")
 }
 
 // COMMAND ----------
+
+import com.microsoft.azure.cosmosdb.spark.config.Config
+import com.microsoft.azure.cosmosdb.spark.schema._
+import com.microsoft.azure.cosmosdb.spark._
+import org.apache.spark.sql.SaveMode
 
 val endpoint = "https://" + dbutils.widgets.get("cosmos-endpoint") + ".documents.azure.com:443/"
 val masterkey = dbutils.secrets.get(scope = "MAIN", key = "DATABRICKS-TOKEN")
@@ -54,5 +66,4 @@ data.write.mode(SaveMode.Overwrite).cosmosDB(writeConfig)
 
 // COMMAND ----------
 
-// Create an external table pointing to your Cosmos DB collection
-spark.sql(s"CREATE TABLE cosmosdata2 USING com.microsoft.azure.cosmosdb.spark options (endpoint '$endpoint', database '$database', collection '$collection', masterkey '$masterkey')")
+spark.sql(s"CREATE TABLE cosmosdata USING com.microsoft.azure.cosmosdb.spark options (endpoint '$endpoint', database '$database', collection '$collection', masterkey '$masterkey')")
