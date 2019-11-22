@@ -41,7 +41,7 @@ if [[ -z "$PREFIX" ]]; then
 fi
 
 # Set service levels
-export COSMOSDB_RU=2000
+export COSMOSDB_RU=4000
 export DATABRICKS_NODETYPE=Standard_DS3_v2
 export DATABRICKS_WORKERS=2
 
@@ -93,4 +93,5 @@ echo "***** Setting up Databricks"
     source create-databricks.sh
 echo
 
-echo "***** Done"
+echo "***** Done with all deployments"
+echo "To continue with this sample navigate to https://github.com/jcocchi/CosmosDBPowerBISparkProxy#visualize-data-with-power-bi and follow the instructions."

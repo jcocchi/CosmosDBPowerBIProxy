@@ -46,7 +46,7 @@ import com.microsoft.azure.cosmosdb.spark._
 import org.apache.spark.sql.SaveMode
 
 val endpoint = "https://" + dbutils.widgets.get("cosmos-endpoint") + ".documents.azure.com:443/"
-val masterkey = dbutils.secrets.get(scope = "MAIN", key = "DATABRICKS-TOKEN")
+val masterkey = dbutils.secrets.get(scope = "MAIN", key = "cosmos-key")
 val database = dbutils.widgets.get("cosmos-database")
 val collection = dbutils.widgets.get("cosmos-collection")
 

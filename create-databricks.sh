@@ -51,10 +51,8 @@ if [[ -z "$pat_token" ]]; then
   kv_secrets_url=$(jq -r '"https://portal.azure.com/#@" + .properties.tenantId + "/resource" + .id + "/secrets"' <<<$kv_info)
 
   cat <<EOM
-  ERROR: Missing PAT token in Key Vault (this is normal the first time you run this script).
-
-  You need to manually create a Databricks PAT token and register it into the Key Vault as follows,
-  then rerun this script or pipeline.
+  Please manually create a Databricks PAT token and register it into the Key Vault as follows,
+  then this script will resume.
 
   - Navigate to:
       $databricks_login_url
@@ -67,8 +65,6 @@ if [[ -z "$pat_token" ]]; then
     As value, enter the PAT token you copied
     Click Create
   - The script will wait for the PAT to be copied into the Key Vault
-    If you stop the script, you can resume it running the following command:
-      ./create-solution.sh -d "$PREFIX" -t $TESTTYPE -s PT
 
 EOM
   
@@ -85,6 +81,9 @@ fi
 export DATABRICKS_HOST=$(jq -r '"https://" + .location + ".azuredatabricks.net"' <<<"$databricks_metainfo")
 export DATABRICKS_TOKEN="$pat_token"
 
+echo "Host: $DATABRICKS_HOST"
+echo "Token: $DATABRICKS_TOKEN"
+
 fi
 echo 'checking Databricks secrets scope exists'
 declare SECRETS_SCOPE=$(databricks secrets list-scopes --output JSON | jq -e ".scopes[]? | select (.name == \"MAIN\") | .name") &>/dev/null
@@ -96,6 +95,8 @@ fi
 echo 'writing Databricks secrets'
 COSMOSDB_MASTER_KEY=$(az cosmosdb keys list -g $RESOURCE_GROUP -n $COSMOSDB_SERVER_NAME --query "primaryMasterKey" -o tsv)
 databricks secrets put --scope "MAIN" --key "cosmos-key" --string-value "$COSMOSDB_MASTER_KEY"
+
+echo "Master Key: $COSMOSDB_MASTER_KEY"
 
 echo 'importing notebooks'
 databricks workspace import_dir notebooks /Shared/cosmosdb-powerbi --overwrite
@@ -118,16 +119,13 @@ cluster_def=$(
 JSON
 )
 
-echo "creating a cluster"
+echo "creating a cluster... this will take a few minutes then this script will resume"
 cluster_id=$(databricks clusters create --json "$cluster_def" | jq .cluster_id)
 cluster_status=$(databricks clusters list | awk '{print $3}' | head -n 1) 
 
-echo "CLUSTER ID $cluster_id"
-
 # Poll to see when the cluster is up and running before continuing
 while [ "$cluster_status" != "RUNNING" ]; do
-    echo "still working..."
-    sleep 15s
+    sleep 5s
     cluster_status=$(databricks clusters list | awk '{print $3}' | head -n 1)
 done
 
