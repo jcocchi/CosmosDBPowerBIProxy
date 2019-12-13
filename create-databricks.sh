@@ -81,9 +81,6 @@ fi
 export DATABRICKS_HOST=$(jq -r '"https://" + .location + ".azuredatabricks.net"' <<<"$databricks_metainfo")
 export DATABRICKS_TOKEN="$pat_token"
 
-echo "Host: $DATABRICKS_HOST"
-echo "Token: $DATABRICKS_TOKEN"
-
 fi
 echo 'checking Databricks secrets scope exists'
 declare SECRETS_SCOPE=$(databricks secrets list-scopes --output JSON | jq -e ".scopes[]? | select (.name == \"MAIN\") | .name") &>/dev/null
@@ -96,8 +93,6 @@ echo 'writing Databricks secrets'
 COSMOSDB_MASTER_KEY=$(az cosmosdb keys list -g $RESOURCE_GROUP -n $COSMOSDB_SERVER_NAME --query "primaryMasterKey" -o tsv)
 databricks secrets put --scope "MAIN" --key "cosmos-key" --string-value "$COSMOSDB_MASTER_KEY"
 
-echo "Master Key: $COSMOSDB_MASTER_KEY"
-
 echo 'importing notebooks'
 databricks workspace import_dir notebooks /Shared/cosmosdb-powerbi --overwrite
 
@@ -105,7 +100,7 @@ cluster_def=$(
     cat <<JSON
 {
     "cluster_name": "powerbi-proxy-cluster",
-    "spark_version": "5.4.x-scala2.11",
+    "spark_version": "6.2.x-scala2.11",
     "node_type_id": "$DATABRICKS_NODETYPE",
     "autoscale" : {
         "min_workers": 1,
@@ -114,7 +109,7 @@ cluster_def=$(
     "spark_env_vars": {
         "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
     },
-    "autotermination_minutes": 300
+    "autotermination_minutes": $DATABRICKS_AUTOTERMINATE_MINS
 }
 JSON
 )

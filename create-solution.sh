@@ -41,9 +41,10 @@ if [[ -z "$PREFIX" ]]; then
 fi
 
 # Set service levels
-export COSMOSDB_RU=4000
+export COSMOSDB_RU=1000
 export DATABRICKS_NODETYPE=Standard_DS3_v2
 export DATABRICKS_WORKERS=2
+export DATABRICKS_AUTOTERMINATE_MINS=300
 
 export RESOURCE_GROUP=$PREFIX
 

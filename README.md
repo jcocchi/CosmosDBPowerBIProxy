@@ -24,7 +24,17 @@ You will need the following tools to run the project
 
 ### Deploy Resources
 
-First log in to your Azure account
+This project will create a new Resource Group and deploy three resources into it. To change any of the default values modify the service level parameters in `create-solution.sh`.
+- Azure Cosmos DB Account
+    - One database named `db`
+    - One collection named `coll` with throughput set to 1000 RUs ($1.92/ day)
+- Azure Databricks Workspace
+    - One cluster with 2 nodes of Standard_DS3_v2 running Databricks runtime version 6.2 and a default auto termination of 300 minutes
+    - One external table `cosmosdata` which is a reference to the underlying data stored in Cosmos DB
+- Azure Key Vault
+    - One secret for the `DATABRICKS_TOKEN`
+
+Log in to your Azure account to begin deploying these resources
 
     az login
 
@@ -37,17 +47,11 @@ once you have selected the subscription you want to use execute the following co
 
     ./create-solution.sh -d <solution_name> -l <azure_location>
 
->Note: The `solution_name` value will be used to create a resource group that will contain all resources created by the script. It will also be used as a prefix for all resources created so, in order to help to avoid name duplicates that will break the script, you may want to generate a name using a unique prefix. **Please also use lowercase letters and numbers only**, since the `solution_name` is also used to create a storage account, which has several constraints on characters usage:
->
->[Storage Naming Conventions and Limits](https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions#storage)
+>Note: The `solution_name` value will be used to create a resource group that will contain all resources created by the script. It will also be used as a prefix for all resources created so, in order to help to avoid name duplicates that will break the script, you may want to generate a name using a unique prefix. 
 
-The first time you run the script it will fail because there has to be a manual step to get the Databricks Personal Access Token (PAT). 
+There is a manual step when running the script to get the Databricks Personal Access Token (PAT). Log in to your databricks workspace at `https://<azure_location>.azuredatabricks.net` when the script starts polling Azure Key Vault to check for the PAT. Then hit the person icon in the top right hand corner of your workspace, select `User Settings`, and `Generate New Token`. This token will only display once so be sure to save it as you will need it again later for connecting to Power BI.
 
-Once the script fails the first time, log in to your databricks workspace at `https://<azure_location>.azuredatabricks.net`, hit the person icon in the top right hand corner, select `User Settings`, and `Generate New Token`. This token will only display once so be sure to save it as you will need it again later for connecting to Power BI.
-
-Take the token and update the `DATABRICKS_TOKEN` secret in the Azure Key Vault that was provisoned for you. Once you have saved the PAT token in Key Vault, re-run the `create-solution.sh` script with the same parameters you originally used.
-
-    ./create-solution.sh -d <solution_name> -l <azure_location>
+Take the token and update the `DATABRICKS_TOKEN` secret in the Key Vault that was provisoned for you. Once you have saved the PAT token in Key Vault the script will continue deploying your resources automatically.
 
 ## Visualize Data with Power BI
 

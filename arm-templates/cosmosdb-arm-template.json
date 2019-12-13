@@ -23,7 +23,7 @@
       },
       "throughput": {
         "type": "int",
-        "defaultValue": 4000,
+        "defaultValue": 1000,
         "minValue": 400,
         "maxValue": 1000000,
         "metadata": {
@@ -84,7 +84,8 @@
                 }
               ]
             }
-          }
+          },
+          "options": { "throughput": "[parameters('throughput')]" }
         }
       }
     ]
