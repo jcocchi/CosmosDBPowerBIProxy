@@ -63,7 +63,7 @@ Take the token and update the `DATABRICKS_TOKEN` secret in the Key Vault that wa
 
 If you haven't already, download the latest version of [PowerBI Desktop](https://powerbi.microsoft.com/en-us/desktop/). Follow the steps below to connect your new data source to Power BI or follow this [tutorial](https://docs.azuredatabricks.net/bi/power-bi.html) from the Databricks documentation for more information.
 
-## Get the JDBC URL
+### Get the JDBC URL
 
 In your Databricks workspace navigate to the `Clusters` tab and select the `powerbi-proxy-cluster`. 
 
@@ -73,9 +73,20 @@ Expand the `Advanced Options` and select `JDBC/ODBC`.
 To construct the neccessary URL start with `https://<azure_location>.azuredatabricks.net:443/` and append the unique HTTP Path. The final URL for this example would be `https://westus2.azuredatabricks.net:443/sql/protocolv1/o/6349145078251239/1024-225105-routs122`.
 ![jdbc](pictures/jdbc_url_2.PNG)
 
-## Connect your Data Source in Power BI
+### Connect your Data Source in Power BI Using the Provided Template
 
-Open PowerBI Desktop and create a new report.
+Open the sample report template in PowerBI. When the template opens it will prompt you for the `cluster_url`, enter the JDBC URL you formed in the step above.
+![enter parameters](pictures/report_parameters.PNG)
+
+A box will pop up promting you for credentials to the cluster, enter `token` as the user name to connect to spark and enter the PAT token you generated earlier as the password. Press `Connect`.
+![spark creds](pictures/spark_creds.PNG)
+
+After connecting to your cluter the report should populate with data from your Cosmos account and look something like this.
+![finished report](pictures/finished_report.PNG)
+
+### Connect your Data Source in Power BI to a New Report
+
+If you don't want to use the provided template open PowerBI Desktop and create a new report.
 
 Select `Get Data`, search for and select `Spark`, then hit `Connect`.
 ![get data](pictures/get_data.PNG)
@@ -88,3 +99,5 @@ Enter `token` as the user name to connect to spark and enter the PAT token you g
 
 Select the `cosmosdata` table from the drop down and press `Load`.
 ![cosmos table](pictures/cosmos_table.PNG)
+
+Now your data is loaded from Cosmos DB and you can create your own report and visuals!
