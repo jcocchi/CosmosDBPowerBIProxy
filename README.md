@@ -75,13 +75,13 @@ To construct the neccessary URL start with `https://<azure_location>.azuredatabr
 
 ### Connect your Data Source in Power BI Using the Provided Template
 
-Open the sample report template in PowerBI. When the template opens it will prompt you for the `cluster_url`, enter the JDBC URL you formed in the step above.
+Open the sample report template (the [sample-report.pbit](sample-report.pbit) file in this repo) in PowerBI. When the template opens it will prompt you for the `cluster_url`, enter the JDBC URL you formed in the step above.
 ![enter parameters](pictures/report_parameters.PNG)
 
 A box will pop up promting you for credentials to the cluster, enter `token` as the user name to connect to spark and enter the PAT token you generated earlier as the password. Press `Connect`.
 ![spark creds](pictures/spark_creds.PNG)
 
-After connecting to your cluter the report should populate with data from your Cosmos account and look something like this.
+After connecting to your cluster the report should populate with data from your Cosmos account and look something like this.
 ![finished report](pictures/finished_report.PNG)
 
 ### Connect your Data Source in Power BI to a New Report
