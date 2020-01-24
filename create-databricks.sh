@@ -24,20 +24,20 @@ az group deployment create \
   workspaceName=$ADB_WORKSPACE \
   location=$LOCATION \
   tier=standard \
-  -o tsv >>log.txt
+  -o tsv >> $LOG_FILE
 fi
 
 databricks_metainfo=$(az resource show -g $RESOURCE_GROUP --resource-type Microsoft.Databricks/workspaces -n $ADB_WORKSPACE -o json)
 
 echo 'creating Key Vault to store Databricks PAT token'
-az keyvault create -g $RESOURCE_GROUP -n $ADB_TOKEN_KEYVAULT -o tsv >>log.txt
+az keyvault create -g $RESOURCE_GROUP -n $ADB_TOKEN_KEYVAULT -o tsv >> $LOG_FILE
 
 echo 'checking PAT token secret presence in Key Vault'
 databricks_token_secret_name="DATABRICKS-TOKEN"
 pat_token_secret=$(az keyvault secret list --vault-name $ADB_TOKEN_KEYVAULT --query "[?ends_with(id, '/$databricks_token_secret_name')].id" -o tsv)
 if [[ -z "$pat_token_secret" ]]; then
   echo 'PAT token secret not present. Creating dummy entry for user to fill in manually'
-  az keyvault secret set --vault-name $ADB_TOKEN_KEYVAULT -n "$databricks_token_secret_name" --file /dev/null -o tsv >>log.txt
+  az keyvault secret set --vault-name $ADB_TOKEN_KEYVAULT -n "$databricks_token_secret_name" --file /dev/null -o tsv >> $LOG_FILE
 fi
 
 echo 'checking PAT token presence in Key Vault'
@@ -164,5 +164,5 @@ JSON
 
     # Echo job web page URL to task output to facilitate debugging
     run_id=$(echo $run | jq .run_id)
-    databricks runs get --run-id "$run_id" | jq -r .run_page_url >>log.txt
+    databricks runs get --run-id "$run_id" | jq -r .run_page_url >> $LOG_FILE
 done # for each notebook

@@ -49,8 +49,7 @@ export DATABRICKS_SPARK_VERSION=6.2.x-scala2.11
 
 export RESOURCE_GROUP=$PREFIX
 
-# remove log.txt if exists
-rm -f log.txt
+export LOG_FILE="create-solution-log_`date '+%Y%m%d%H%M%S'`.txt"
 
 echo "Checking pre-requisites..."
 
@@ -75,7 +74,7 @@ echo
 
 echo "***** Creating Resource Group"
     az group create -n $RESOURCE_GROUP -l $LOCATION \
-    -o tsv >> log.txt
+    -o tsv >> $LOG_FILE
 echo
 
 echo "***** Setting up Cosmos DB"

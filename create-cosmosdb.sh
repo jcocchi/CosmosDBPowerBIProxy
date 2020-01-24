@@ -17,4 +17,4 @@ az group deployment create \
     databaseName=$COSMOSDB_DATABASE_NAME \
     containerName=$COSMOSDB_COLLECTION_NAME \
     throughput=$COSMOSDB_RU \
-  -o tsv >> log.txt
+  -o tsv >> $LOG_FILE
