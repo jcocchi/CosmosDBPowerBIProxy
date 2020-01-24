@@ -40,6 +40,8 @@ This project will create a new Resource Group and deploy three resources into it
 - Azure Key Vault
     - One secret for the `DATABRICKS_TOKEN`
 
+> Note: to get the latest Spark version supported by Databricks run the `databricks clusters spark-version` command using the Databricks CLI and then update the `DATABRICKS_SPARK_VERSION` variable in `create-solution.sh` with the latest version from the list.
+
 Log in to your Azure account to begin deploying these resources
 
     az login
