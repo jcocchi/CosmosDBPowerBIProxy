@@ -100,7 +100,7 @@ cluster_def=$(
     cat <<JSON
 {
     "cluster_name": "powerbi-proxy-cluster",
-    "spark_version": "6.2.x-scala2.11",
+    "spark_version": "$DATABRICKS_SPARK_VERSION",
     "node_type_id": "$DATABRICKS_NODETYPE",
     "autoscale" : {
         "min_workers": 1,

@@ -12,7 +12,7 @@ The data flow using this architecture is as follows:
 
 These deployment scripts have been written and tested on [Ubuntu 18 LTS](http://releases.ubuntu.com/18.04/) so please ensure you are using a compatible environment. At the end of deployment you will have an Azure Cosmos DB account populated with 10 sample records and a Databricks cluster running and hosting a table that contains those records. This Databricks table is the data source we will connect to PowerBI. 
 
-In order for PowerBI to connect to your table the cluster needs to remain running. Initally the cluster has been set to autoterminate after 300 minutes of inactivity to avoid unneccessary cost while giving you time to connect to PowerBI.
+In order for PowerBI to connect to your table the cluster needs to remain running. Initially the cluster has been set to autoterminate after 300 minutes of inactivity to avoid unneccessary cost while giving you time to connect to PowerBI but this can be changed by modifying the value of the `DATABRICKS_AUTOTERMINATE_MINS` environment variable.
 
 > Note: many of these scripts were modified from the [Streaming at Scale](https://github.com/Azure-Samples/streaming-at-scale) repository and repurposed for this project. If you are interested, please check out that repository as it is a fantastic resource for learning about streaming data in Azure!
 
@@ -30,7 +30,7 @@ You will need the following tools to run the project
 
 ### Deploy Resources
 
-This project will create a new Resource Group and deploy three resources into it. To change any of the default values modify the service level parameters in `create-solution.sh`.
+This project will create a new Resource Group and deploy three resources into it. **To change any of the default values modify the service level parameters in `create-solution.sh`.**
 - Azure Cosmos DB Account
     - One database named `db`
     - One collection named `coll` with throughput set to 1000 RUs ($1.92/ day)
