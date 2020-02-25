@@ -1,6 +1,8 @@
 # Cosmos DB Power BI Connector Spark Proxy
 
-This project shows how to use Spark as a proxy to access large amounts of data that is stored in Cosmos DB with Power BI.
+> Note: The official version of this repo has been moved to https://github.com/Azure-Samples/azure-cosmosdb-powerbi-connector-spark-proxy.
+
+This project shows how to use Spark as a proxy to access large amounts of data that is stored in Cosmos DB with Power BI. 
 
 ![architecture](pictures/architecture.PNG)
 
